@@ -68,11 +68,10 @@ def check_login(uid: int, token: str):
     return False
 
 
-@app.route('/talk/', methods=['POST', 'GET'])
+@app.route('/talk/', methods=['POST'])
 def talk():
-    ans = {}
     try:
-
+        ans = {}
         data = request.get_data()
         js = json.loads(data)
         ctoken = js['token']
@@ -167,7 +166,4 @@ def init_db():
 
 if __name__ == '__main__':
     # init_db()
-    # app.run(debug=True, port=8888)
     app.run(debug=True, host="0.0.0.0", port=8888)
-# ?n8G5Bhk7npmWoZ0
-# ?n8G5Bhk7npmWoZ0

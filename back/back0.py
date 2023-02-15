@@ -100,17 +100,11 @@ def talk():
 def login():
     try:
         ans = {}
-        cname = request.cookies.get('name')
-        ctoken = request.cookies.get('token')
-        if cname != None and ctoken != None and check_login(cname, ctoken):
-            return wrong("you've already logged in")
         data = request.get_data()
         js = json.loads(data)
         #检查账号密码是否匹配
         user_name = str(js['name'])
         psw = str(js['password'])
-        user_name.encode('utf-8')
-        psw.encode('utf-8')
         user = User.query.filter_by(name=user_name).first()
         if user == None:
             return wrong("Wrong name or password")

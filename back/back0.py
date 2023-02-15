@@ -77,7 +77,7 @@ def talk():
         ctoken = js['token']
         cid = int(js['id'])
         if cid == None or ctoken == None or (not check_login(cid, ctoken)):
-            return wrong("You are not logged in")
+            return wrong("You are not logged in", 2)
 
         que = js['question']
         ans["answer"], ans["from"] = ai_gpt3.ask(que)
@@ -114,7 +114,7 @@ def login():
 
         #账号密码匹配后
         token = get_salt(16)
-        cookie = Cookie(user.id, user.name, str(get_time() + 3600), token)
+        cookie = Cookie(user.id, user.name, str(get_time() + 999 * 999), token)
         ans['token'] = token
         ans['id'] = user.id
         with app.app_context():

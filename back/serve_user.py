@@ -18,13 +18,13 @@ def get_hash(psw: str, salt: str):
     return hashlib.sha256(result.encode('utf-8')).hexdigest()
 
 
-def wrong(msg: str):
-    ans = {"msg": msg, "state": False}
+def wrong(msg: str, how: int = 1):
+    ans = {"msg": msg, "state": how}
     return jsonify(ans)
 
 
 def right(msg: str):
-    ans = {"msg": msg, "state": True}
+    ans = {"msg": msg, "state": 0}
     return jsonify(ans)
 
 

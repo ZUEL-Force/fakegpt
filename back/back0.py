@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import json
@@ -72,13 +72,14 @@ def check_login(uid: int, token: str):
 def talk():
     ans = {}
     try:
-        ctoken = request.cookies.get('token')
-        cid = int(request.cookies.get('id'))
-        if cid == None or ctoken == None or (not check_login(cid, ctoken)):
-            return wrong("You are not logged in")
 
         data = request.get_data()
         js = json.loads(data)
+        ctoken = js['token']
+        cid = int(js['id'])
+        if cid == None or ctoken == None or (not check_login(cid, ctoken)):
+            return wrong("You are not logged in")
+
         que = js['question']
         ans["answer"], ans["from"] = ai_gpt3.ask(que)
         ans["time"] = get_time()
@@ -90,7 +91,7 @@ def talk():
         with app.app_context():
             db.session.add_all(talks)
             db.session.commit()
-        return jsonify(ans)
+        return right(ans)
     except:
         db.session.rollback()
         return wrong("Background service error, please try again later")
@@ -99,6 +100,7 @@ def talk():
 @app.route('/login/', methods=['POST'])
 def login():
     try:
+        ans = {}
         cname = request.cookies.get('name')
         ctoken = request.cookies.get('token')
         if cname != None and ctoken != None and check_login(cname, ctoken):
@@ -120,13 +122,12 @@ def login():
         #账号密码匹配后
         token = get_salt(16)
         cookie = Cookie(user.id, user.name, str(get_time() + 3600), token)
-        resp = make_response(right("success"))  # 设置响应体
-        resp.set_cookie("token", token, max_age=3600)
-        resp.set_cookie("id", f"{user.id}", max_age=3600)
+        ans['token'] = token
+        ans['id'] = user.id
         with app.app_context():
             db.session.add(cookie)
             db.session.commit()
-        return resp
+        return right(ans)
     except:
         db.session.rollback()
         return wrong("Background service error, please try again later")

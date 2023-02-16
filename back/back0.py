@@ -4,13 +4,13 @@ from flask_cors import CORS
 import json
 import os
 import config
-from config import MY_WRONG, MY_PIC, UPLOAD_FOLDER
+from config import MY_WRONG, MY_PIC, IMG_FOLDER, MODEL_DICT
 import ai_gpt3
 from serve_user import wrong, right, get_hash, get_salt, get_time, img_allowed, rename_img
 
-app = Flask(__name__, static_folder=UPLOAD_FOLDER)
+app = Flask(__name__, static_folder=IMG_FOLDER)
 app.config.from_object(config)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = IMG_FOLDER
 CORS(app, supports_credentials=True)
 db = SQLAlchemy(app)
 
@@ -84,12 +84,15 @@ def talk():
             return wrong("You are not logged in", 2)
 
         que = js['question']
-        ans["answer"], ans["from"] = ai_gpt3.ask(que)
+        model = js['to']
+        if model not in MODEL_DICT.keys():
+            return wrong("There is no such AI model")
+        ans["answer"], ans["from"] = ai_gpt3.ask(que, model)
         ans["time"] = get_time()
         ans["to"] = js['from']
         talks = [
-            Talk(cid, -1, str(js['time']), que),
-            Talk(-1, cid, str(ans['time']), ans['answer'])
+            Talk(cid, MODEL_DICT[model][1], str(js['time']), que),
+            Talk(MODEL_DICT[model][1], cid, str(ans['time']), ans['answer'])
         ]
         with app.app_context():
             db.session.add_all(talks)
@@ -173,7 +176,7 @@ def getface():
 
         fname = User.query.filter_by(id=cid).first().img
         # send_from_directory:使用send_file函数，将指定上传目录中的文件发送到客户端
-        ans = {"img": f'{UPLOAD_FOLDER}{fname}'}
+        ans = {"img": f'{IMG_FOLDER}{fname}'}
         return right(ans)
     except:
         return wrong(MY_WRONG)
@@ -200,9 +203,23 @@ def updateface():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
 
         # send_from_directory:使用send_file函数，将指定上传目录中的文件发送到客户端
-        return right({"img": f"{UPLOAD_FOLDER}{fname}"})
+        return right({"img": f"{IMG_FOLDER}{fname}"})
     except:
         db.session.rollback()
+        return wrong(MY_WRONG)
+
+
+@app.route('/getmodel/', methods=['POST'])
+def getmodel():
+    try:
+        ans = {'models': []}
+        for key, value in MODEL_DICT.items():
+            ans['models'].append({
+                'name': key,
+                'img': f'{IMG_FOLDER}{value[1]}.png'
+            })
+        return right(ans)
+    except:
         return wrong(MY_WRONG)
 
 

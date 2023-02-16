@@ -1,8 +1,13 @@
 from private import DIALECT, DRIVER, USERNAME, PASSWORD, HOST, PORT, DATABASE
 
-MODEL_LIST = [
-    "text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001"
-]
+MODEL_DICT = {
+    "davinci": ["text-davinci-003", -1],
+    "curie": ["text-curie-001", -2],
+    "babbage": ["text-babbage-001", -3],
+    "ada": ["text-ada-001", -4]
+}
+
+# "text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001"
 
 MY_WRONG = "Background service error, please try again later"
 MY_PIC = "0.jpg"
@@ -15,4 +20,4 @@ SQLALCHEMY_COMMIT_ON_TEARDOWN = False  # 禁止自动提交数据处理
 JSON_AS_ASCII = False
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
-UPLOAD_FOLDER = 'img/'
+IMG_FOLDER = 'img/'

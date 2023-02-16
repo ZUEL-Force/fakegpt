@@ -5,10 +5,10 @@ import private
 openai.api_key = private.API_KEY
 
 
-def ask(que: str, no: int = 1):
+def ask(que: str, ai: str = "curie"):
     try:
         response = openai.Completion.create(
-            model=config.MODEL_LIST[no],
+            model=config.MODEL_DICT[ai][0],
             prompt=que,
             temperature=0.8,
             max_tokens=1024,
@@ -18,6 +18,6 @@ def ask(que: str, no: int = 1):
         )
         text = response["choices"][0]["text"]
         text = str(text).strip()
-        return text, config.MODEL_LIST[no]
+        return text, ai
     except:
-        return "false", config.MODEL_LIST[no]
+        return "false", ai

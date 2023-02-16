@@ -8,7 +8,7 @@ from config import MY_WRONG, MY_PIC, UPLOAD_FOLDER
 import ai_gpt3
 from serve_user import wrong, right, get_hash, get_salt, get_time, img_allowed, rename_img
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=UPLOAD_FOLDER)
 app.config.from_object(config)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 CORS(app, supports_credentials=True)
@@ -173,7 +173,8 @@ def getface():
 
         fname = User.query.filter_by(id=cid).first().img
         # send_from_directory:使用send_file函数，将指定上传目录中的文件发送到客户端
-        return send_from_directory(app.config['UPLOAD_FOLDER'], fname)
+        ans = {"img": f'{UPLOAD_FOLDER}{fname}'}
+        return right(ans)
     except:
         return wrong(MY_WRONG)
 
@@ -199,7 +200,7 @@ def updateface():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
 
         # send_from_directory:使用send_file函数，将指定上传目录中的文件发送到客户端
-        return send_from_directory(app.config['UPLOAD_FOLDER'], fname)
+        return right({"img": f"{UPLOAD_FOLDER}{fname}"})
     except:
         db.session.rollback()
         return wrong(MY_WRONG)

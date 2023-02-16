@@ -1,13 +1,16 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import json
+import os
 import config
+from config import MY_WRONG, MY_PIC, UPLOAD_FOLDER
 import ai_gpt3
-from serve_user import wrong, right, get_hash, get_salt, get_time
+from serve_user import wrong, right, get_hash, get_salt, get_time, img_allowed, rename_img
 
 app = Flask(__name__)
 app.config.from_object(config)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 CORS(app, supports_credentials=True)
 db = SQLAlchemy(app)
 
@@ -20,6 +23,7 @@ class User(db.Model):
     name = db.Column(db.String(64), nullable=False, unique=True)
     psw = db.Column(db.String(512), nullable=False)
     salt = db.Column(db.String(256), nullable=False)
+    img = db.Column(db.String(16), default=MY_PIC)
 
     def __init__(self, name: str, psw: str, salt: str):
         self.name = name
@@ -93,7 +97,7 @@ def talk():
         return right(ans)
     except:
         db.session.rollback()
-        return wrong("Background service error, please try again later")
+        return wrong(MY_WRONG)
 
 
 @app.route('/login/', methods=['POST'])
@@ -123,17 +127,15 @@ def login():
         return right(ans)
     except:
         db.session.rollback()
-        return wrong("Background service error, please try again later")
+        return wrong(MY_WRONG)
 
 
 @app.route('/create/', methods=['POST'])
 def create():
     try:
-        data = request.get_data()
-        js = json.loads(data)
-        #检查用户名是否被占用
-        user_name = str(js['name'])
-        psw = str(js['password'])
+        user_name = request.form['name']
+        psw = request.form['password']
+
         salt = get_salt()
         result = get_hash(psw, salt)
         user_list = User.query.filter_by(name=user_name).all()
@@ -143,13 +145,64 @@ def create():
             return wrong("Too short password")
         #注册合法后
         user = User(user_name, result, salt)
+        uid = len(User.query.all()) + 1
+        if 'img' in request.files:
+            file = request.files['img']
+            fname = rename_img(file.filename, uid)
+            user.img = fname
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+
         with app.app_context():
             db.session.add(user)
             db.session.commit()
         return right("success")
     except:
         db.session.rollback()
-        return wrong("Background service error, please try again later")
+        return wrong(MY_WRONG)
+
+
+@app.route('/getface/', methods=['POST'])
+def getface():
+    try:
+        data = request.get_data()
+        js = json.loads(data)
+        ctoken = js['token']
+        cid = int(js['id'])
+        if cid == None or ctoken == None or (not check_login(cid, ctoken)):
+            return wrong("You are not logged in", 2)
+
+        fname = User.query.filter_by(id=cid).first().img
+        # send_from_directory:使用send_file函数，将指定上传目录中的文件发送到客户端
+        return send_from_directory(app.config['UPLOAD_FOLDER'], fname)
+    except:
+        return wrong(MY_WRONG)
+
+
+@app.route('/updateface/', methods=['POST'])
+def updateface():
+    try:
+        if 'img' not in request.files:
+            return wrong("Please upload pictures.")
+        file = request.files['img']
+        cid = int(request.form['id'])
+        ctoken = request.form['token']
+        if not check_login(cid, ctoken):
+            return wrong("you are not logged in")
+        if file == None or not img_allowed(file.filename):
+            return wrong("Upload the file in the correct format")
+
+        fname = rename_img(file.filename, cid)
+        with app.app_context():
+            user = User.query.filter_by(id=cid).first()
+            user.img = fname
+            db.session.commit()
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+
+        # send_from_directory:使用send_file函数，将指定上传目录中的文件发送到客户端
+        return send_from_directory(app.config['UPLOAD_FOLDER'], fname)
+    except:
+        db.session.rollback()
+        return wrong(MY_WRONG)
 
 
 def init_db():
@@ -160,4 +213,4 @@ def init_db():
 
 if __name__ == '__main__':
     # init_db()
-    app.run(debug=True, host="0.0.0.0", port=8888)
+    app.run(debug=True, host="0.0.0.0", port=11111)

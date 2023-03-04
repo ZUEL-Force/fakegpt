@@ -1,6 +1,6 @@
 /img
 file.log
-private.sql
 private.py
 /private
 /instance
+/__pycache__

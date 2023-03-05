@@ -1,7 +1,7 @@
-import {formPost, post} from "@/api/env.config";
+import {formPost, post,longPost} from "@/api/env.config";
 
 function sendMsg(data){
-    return post(data,'/talk/')
+    return longPost(data,'/talk/')
 }
 function uploadImg(file){
     return formPost(file,'/updateface/')

@@ -21,6 +21,11 @@ export const MY_AVATAR='avatar'
 export const ID='id'
 //最近一次更新的时间
 export const LAST_DATE='lastUpdate'
+
+//会话
+export const SESSIONS='my_sessions'
+export const CURRENT_SESSION='current_session'
+export const MSG_CACHE='msg_cache'
 // 变量映射
 
 const THEME_TYPE=''

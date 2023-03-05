@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <div class="back" style="position:absolute;left:10px; top:10px;" @click="$router.go(-1)"><van-tag>返回</van-tag></div>
     <div class="logo">
       <a-upload
           v-model:file-list="img"

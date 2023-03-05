@@ -3,12 +3,17 @@ import {ACCESS_TOKEN, ID} from "@/store/constant";
 import {showFailToast} from "vant";
 import storage from "@/store/store";
 import router from "@/router";
-import {stringify} from "qs";
+// import {stringify} from "qs";
 
 const baseUrl = process.env.VUE_APP_API_HOST
 const request = axios.create({
     baseURL: baseUrl,
-    timeout: 30000
+    timeout: 6000//6s
+})
+const longRequest = axios.create({
+    baseURL: baseUrl,
+    //设置
+    timeout: 5 * 60 * 1000//5min
 })
 
 
@@ -20,7 +25,17 @@ function post(data, url) {
     })
 
 }
-function formPost(data,url){
+
+function longPost(data, url) {
+    return longRequest({
+        url: url,
+        method: 'post',
+        data
+    })
+
+}
+
+function formPost(data, url) {
     return request({
         url: url,
         method: 'post',
@@ -87,13 +102,13 @@ const errorHandler = (error) => {
 // request interceptor
 request.interceptors.request.use(config => {
     const token = storage.get(ACCESS_TOKEN)
-    const id=storage.get(ID)
+    const id = storage.get(ID)
     // console.log('请求拦截器',config)
     // 如果 token 存在
     // 让每个请求携带自定义 token 请根据实际情况自行修改
     if (token) {
         // config.headers[ACCESS_TOKEN] = token
-        Object.assign(config.data,{token:token,id:id})
+        Object.assign(config.data, {token: token, id: id})
     }
     return config
 }, errorHandler)
@@ -102,18 +117,48 @@ request.interceptors.request.use(config => {
 request.interceptors.response.use((res) => {
 // const res = response.data
 
-if (res.data.state!==0) {
-    showFailToast(res.msg)
-    if(res.data.state===2)
-    {
-        storage.remove(ACCESS_TOKEN)
-        router.go(0)
+    if (res.data.state !== 0) {
+        showFailToast(res.msg)
+        if (res.data.state === 2) {
+            storage.remove(ACCESS_TOKEN)
+            router.go(0)
+        }
+        return Promise.reject(new Error(res.msg || 'Error'))
+    } else {
+        return res
     }
-    return Promise.reject(new Error(res.msg || 'Error'))
-} else {
-    return res
-}
 }, errorHandler)
 
 
-export {post, get,formPost}
+// request interceptor
+longRequest.interceptors.request.use(config => {
+    const token = storage.get(ACCESS_TOKEN)
+    const id = storage.get(ID)
+    // console.log('请求拦截器',config)
+    // 如果 token 存在
+    // 让每个请求携带自定义 token 请根据实际情况自行修改
+    if (token) {
+        // config.headers[ACCESS_TOKEN] = token
+        Object.assign(config.data, {token: token, id: id})
+    }
+    return config
+}, errorHandler)
+
+// response interceptor
+longRequest.interceptors.response.use((res) => {
+// const res = response.data
+
+    if (res.data.state !== 0) {
+        showFailToast(res.data.msg)
+        if (res.data.state === 2) {
+            storage.remove(ACCESS_TOKEN)
+            router.go(0)
+        }
+        return Promise.reject(new Error(res.data.msg || 'Error'))
+    } else {
+        return res
+    }
+}, errorHandler)
+
+
+export {post, get, formPost, longPost}

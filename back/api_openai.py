@@ -3,7 +3,7 @@ import os
 import openai
 
 import private
-from config import MODEL
+from config import AUDIO_FOLDER, MODEL
 
 openai.api_key = private.API_KEY
 
@@ -18,10 +18,10 @@ def chatgpt(que: list):
 
 
 #TODO:语音转文字
-def whisper(path: str, file: str):
-    audio_file = open(os.path.join(path, file), 'rb')
+def whisper(file: str):
+    audio_file = open(os.path.join(AUDIO_FOLDER, file), 'rb')
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
-    return transcript
+    return transcript["text"]
 
 
 #TODO:文字转图片
@@ -32,4 +32,4 @@ def dalle():
 # if __name__ == '__main__':
 #     path, file = 'static/audio', 'test.mp3'
 #     transcript = whisper(path, file)
-#     print(transcript["text"])
+#     print(transcript)

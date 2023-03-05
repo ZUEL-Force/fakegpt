@@ -23,7 +23,7 @@ def talk():
     que = js['messages']
     if que == None:
         return wrong("Parameter error")
-    msg = api_openai.ask(que)
+    msg = api_openai.chatgpt(que)
     text = msg[0]
     reason = msg[1]
     cost = msg[2]
@@ -86,7 +86,7 @@ def create():
         file = request.files['img']
         fname = rename_img(file.filename, uid)
         user.img = fname
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+        file.save(os.path.join(IMG_FOLDER, fname))
 
     with app.app_context():
         db.session.add(user)
@@ -104,7 +104,6 @@ def getface():
         return wrong("You are not logged in", 2)
 
     fname = User.query.filter_by(id=cid).first().img
-    # send_from_directory:使用send_file函数，将指定上传目录中的文件发送到客户端
     ans = {"img": f'{IMG_FOLDER}{fname}'}
     return right(ans)
 
@@ -130,9 +129,7 @@ def updateface():
         user = User.query.filter_by(id=cid).first()
         user.img = fname
         db.session.commit()
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
-
-    # send_from_directory:使用send_file函数，将指定上传目录中的文件发送到客户端
+    file.save(os.path.join(IMG_FOLDER, fname))
     return right({"img": f"{IMG_FOLDER}{fname}"})
 
 

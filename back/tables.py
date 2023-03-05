@@ -40,7 +40,7 @@ class Talk(db.Model):
     from_id = db.Column(db.Integer, nullable=False)
     to_id = db.Column(db.Integer, nullable=False)
     tstamp = db.Column(db.String(16), nullable=False)
-    text = db.Column(db.String(2048), nullable=False)
+    text = db.Column(db.String(4096), nullable=False)
     reason = db.Column(db.String(32), nullable=False)
     cost = db.Column(db.Integer, nullable=False)
 

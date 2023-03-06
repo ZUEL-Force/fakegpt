@@ -4,7 +4,7 @@ import time
 
 from flask import jsonify
 
-from config import ALLOWED_EXTENSIONS
+from config import AUDIO_EXTENSIONS, IMG_EXTENSIONS
 from mybasic import app
 from tables import *
 
@@ -65,9 +65,12 @@ def get_time():
     return int(time.time())
 
 
-def img_allowed(filename: str):
-    return '.' in filename and filename.rsplit(
-        '.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def img_allowed(fname: str):
+    return '.' in fname and fname.rsplit('.', 1)[1].lower() in IMG_EXTENSIONS
+
+
+def audio_allowed(fname: str):
+    return '.' in fname and fname.rsplit('.', 1)[1].lower() in AUDIO_EXTENSIONS
 
 
 def rename_img(name: str, id: int):

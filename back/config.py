@@ -11,15 +11,16 @@ MY_WRONG = "Background service error, please try again later"
 MY_PIC = "0.jpg"
 MY_REASON = "talk"
 
-# SQLALCHEMY_DATABASE_URI = "{}+{}://{}:{}@{}:{}/{}?charset=utf8".format(
-#     DIALECT, DRIVER, USERNAME, PASSWORD, HOST, PORT, DATABASE)
 SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
 SQLALCHEMY_TRACK_MODIFICATIONS = True  # 设置sqlalchemy自动更跟踪数据库
-SQLALCHEMY_ECHO = True  # 查询时会显示原始SQL语句
+SQLALCHEMY_ECHO = False  # 查询时会显示原始SQL语句
 SQLALCHEMY_COMMIT_ON_TEARDOWN = False  # 禁止自动提交数据处理
 
 JSON_AS_ASCII = False
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+IMG_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+AUDIO_EXTENSIONS = {'m4a', 'mp3', 'mp4', 'mpeg', 'mpga', 'wav', 'webm'}
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
-IMG_FOLDER = 'img/'
+IMG_FOLDER = 'static/img/'
+AUDIO_FOLDER = 'static/audio/'
+STATIC_FOLDER = 'static/'

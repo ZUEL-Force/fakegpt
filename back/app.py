@@ -2,9 +2,10 @@ import json
 import os
 
 from flask import request
+import requests
 
 import api_openai
-from config import IMG_FOLDER, MODEL, MY_REASON
+from config import IMG_FOLDER, MODEL, MY_REASON, REMOTE_URL, QQ_PRITE_URL, QQ_GROUP_URL, MY_QQ_ID
 from mybasic import app, db
 from myTools import *
 from tables import Talk, User
@@ -132,6 +133,65 @@ def updateface():
     file.save(os.path.join(IMG_FOLDER, fname))
     return right({"img": f"{IMG_FOLDER}{fname}"})
 
+
+@app.route('/myqq/', methods=['GET', 'POST'])
+def myqq():
+    data = request.get_data()
+    js = json.loads(data)
+    post_type = js['post_type']
+    user_id = js['user_id']
+
+    if post_type != 'message':
+        if request.get_json().get('post_type') == 'request':  # 收到请求消息
+            print("收到请求消息")
+            request_type = request.get_json().get('request_type')  # group
+            uid = request.get_json().get('user_id')
+            flag = request.get_json().get('flag')
+            comment = request.get_json().get('comment')
+            if request_type == "friend":
+                pass
+                # 直接同意，你可以自己写逻辑判断是否通过
+                # set_friend_add_request(flag, "true")
+            if request_type == "group":
+                print("收到群请求")
+                sub_type = request.get_json().get('sub_type')
+                # 两种，一种的加群(当机器人为管理员的情况下)，一种是邀请入群
+                gid = request.get_json().get('group_id')
+                if sub_type == "add":
+                    # 如果机器人是管理员，会收到这种请求，请自行处理
+                    # print("收到加群申请，不进行处理")
+                    pass
+                elif sub_type == "invite":
+                    # 直接同意，你可以自己写逻辑判断是否通过
+                    # set_group_invite_request(flag, "true")
+                    pass
+        return right("ok")
+
+    message = js['message']
+    chat = make_chat(message)
+    js_param = {
+        "from": "qq",
+        "time": "1676443000",
+        "messages": chat,
+        "id": 2,
+        "token": "xue_JesAbMQxYQoq"
+    }
+    if js['message_type'] == 'private':
+        ans = requests.post(url=REMOTE_URL, json=js_param).json()
+        qq_send = {"user_id": user_id, "message": ans['msg']['answer']}
+        requests.post(url=QQ_PRITE_URL, json=qq_send)
+    else:
+        if str("[CQ:at,qq=%s]" % MY_QQ_ID) in message:
+            ans = requests.post(url=REMOTE_URL, json=js_param).json()
+            qq_send = {
+                "group_id": js['group_id'],
+                "message": ans['msg']['answer']
+            }
+            requests.post(url=QQ_GROUP_URL, json=qq_send)
+    return right('ok')
+
+
+# TODO: 机器人群管理、机器人上下文对话
 
 if __name__ == '__main__':
     # init_db()

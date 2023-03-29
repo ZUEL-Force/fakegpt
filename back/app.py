@@ -149,33 +149,38 @@ def myqq():
 
     message = js['message']
     my_time = get_time()
-    qq = QQ_temp(user_id, MY_QQ_ID, my_time, message)
 
-    all_list = QQ_temp.query.filter(QQ_temp.tstamp.__ge__(int(my_time) -
-                                                          200)).all()
-    msg_list = []
-    for it in all_list:
-        if it.from_id == MY_QQ_ID:
-            if it.to_id == user_id:
-                msg_list.append({"role": "assistant", "content": it.text})
-        if it.from_id == user_id:
-            if it.to_id == MY_QQ_ID:
-                msg_list.append({"role": "user", "content": it.text})
-    msg_list.append({"role": "user", "content": message})
-    # for it in msg_list:
-    #     print(it)
-
-    chat = make_chat(msg_list)
-    to_chat = {
-        "from": user_id,
-        "time": get_time(),
-        "messages": chat,
-        "id": 2,
-        "token": "xue_JesAbMQxYQoq"
-    }
     if js['message_type'] == 'private':
+        qq = QQ_temp(user_id, MY_QQ_ID, my_time, message, -1)
+
+        all_list = QQ_temp.query.filter(
+            QQ_temp.tstamp.__ge__(int(my_time) - 200)).all()
+        msg_list = []
+        for it in all_list:
+            if it.from_id == MY_QQ_ID:
+                if it.to_id == user_id:
+                    if it.group_id == -1:
+                        msg_list.append({
+                            "role": "assistant",
+                            "content": it.text
+                        })
+            if it.from_id == user_id:
+                if it.to_id == MY_QQ_ID:
+                    if it.group_id == -1:
+                        msg_list.append({"role": "user", "content": it.text})
+        msg_list.append({"role": "user", "content": message})
+
+        chat = make_chat(msg_list)
+        to_chat = {
+            "from": user_id,
+            "time": get_time(),
+            "messages": chat,
+            "id": 2,
+            "token": "xue_JesAbMQxYQoq"
+        }
+
         ans = requests.post(url=REMOTE_URL, json=to_chat).json()
-        qq2 = QQ_temp(MY_QQ_ID, user_id, my_time, ans['msg']['answer'])
+        qq2 = QQ_temp(MY_QQ_ID, user_id, my_time, ans['msg']['answer'], -1)
         qq_send = {"user_id": user_id, "message": ans['msg']['answer']}
         requests.post(url=QQ_PRITE_URL, json=qq_send)
         with app.app_context():
@@ -184,8 +189,41 @@ def myqq():
             db.session.commit()
     else:
         if str("[CQ:at,qq=%s]" % MY_QQ_ID) in message:
+            group_id = int(js['group_id'])
+            qq = QQ_temp(user_id, MY_QQ_ID, my_time, message, group_id)
+
+            all_list = QQ_temp.query.filter(
+                QQ_temp.tstamp.__ge__(int(my_time) - 200)).all()
+            msg_list = []
+            for it in all_list:
+                if it.from_id == MY_QQ_ID:
+                    if it.to_id == user_id:
+                        if it.group_id == group_id:
+                            msg_list.append({
+                                "role": "assistant",
+                                "content": it.text
+                            })
+                if it.from_id == user_id:
+                    if it.to_id == MY_QQ_ID:
+                        if it.group_id == group_id:
+                            msg_list.append({
+                                "role": "user",
+                                "content": it.text
+                            })
+            msg_list.append({"role": "user", "content": message})
+
+            chat = make_chat(msg_list)
+            to_chat = {
+                "from": user_id,
+                "time": get_time(),
+                "messages": chat,
+                "id": 2,
+                "token": "xue_JesAbMQxYQoq"
+            }
+
             ans = requests.post(url=REMOTE_URL, json=to_chat).json()
-            qq2 = QQ_temp(MY_QQ_ID, user_id, my_time, ans['msg']['answer'])
+            qq2 = QQ_temp(MY_QQ_ID, user_id, my_time, ans['msg']['answer'],
+                          group_id)
             qq_send = {
                 "group_id": js['group_id'],
                 "message": ans['msg']['answer']

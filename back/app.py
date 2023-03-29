@@ -9,7 +9,7 @@ from config import IMG_FOLDER, MODEL, MY_REASON, QQ_PRITE_URL, QQ_GROUP_URL, MY_
 from mybasic import app, db
 from myTools import *
 from tables import Talk, User
-from private import REMOTE_URL
+from private import REMOTE_URL, MY_QQ_ID
 
 
 @app.route('/talk/', methods=['POST'])

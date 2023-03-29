@@ -25,7 +25,6 @@ IMG_FOLDER = 'static/img/'
 AUDIO_FOLDER = 'static/audio/'
 STATIC_FOLDER = 'static/'
 
-REMOTE_URL = 'http://43.142.142.39:11112/talk/'
 QQ_PRITE_URL = 'http://127.0.0.1:5700/send_private_msg'
 QQ_GROUP_URL = 'http://127.0.0.1:5700/send_group_msg'
 MY_QQ_ID = '1639740481'

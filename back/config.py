@@ -25,6 +25,6 @@ IMG_FOLDER = 'static/img/'
 AUDIO_FOLDER = 'static/audio/'
 STATIC_FOLDER = 'static/'
 
-QQ_PRITE_URL = 'http://127.0.0.1:5700/send_private_msg'
 QQ_GROUP_URL = 'http://127.0.0.1:5700/send_group_msg'
+QQ_PRITE_URL = 'http://127.0.0.1:5700/send_private_msg'
 MY_QQ_ID = '1639740481'

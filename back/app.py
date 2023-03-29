@@ -5,10 +5,10 @@ from flask import request
 import requests
 
 import api_openai
-from config import IMG_FOLDER, MODEL, MY_REASON, QQ_PRITE_URL, QQ_GROUP_URL, MY_QQ_ID
+from config import IMG_FOLDER, MODEL, MY_REASON, QQ_PRITE_URL, QQ_GROUP_URL
 from mybasic import app, db
 from myTools import *
-from tables import Talk, User
+from tables import Talk, User, QQ_temp
 from private import REMOTE_URL, MY_QQ_ID
 
 
@@ -140,55 +140,61 @@ def myqq():
     data = request.get_data()
     js = json.loads(data)
     post_type = js['post_type']
-    user_id = js['user_id']
+    user_id = int(js['user_id'])
 
     if post_type != 'message':
         if request.get_json().get('post_type') == 'request':  # 收到请求消息
-            print("收到请求消息")
-            request_type = request.get_json().get('request_type')  # group
-            uid = request.get_json().get('user_id')
-            flag = request.get_json().get('flag')
-            comment = request.get_json().get('comment')
-            if request_type == "friend":
-                pass
-                # 直接同意，你可以自己写逻辑判断是否通过
-                # set_friend_add_request(flag, "true")
-            if request_type == "group":
-                print("收到群请求")
-                sub_type = request.get_json().get('sub_type')
-                # 两种，一种的加群(当机器人为管理员的情况下)，一种是邀请入群
-                gid = request.get_json().get('group_id')
-                if sub_type == "add":
-                    # 如果机器人是管理员，会收到这种请求，请自行处理
-                    # print("收到加群申请，不进行处理")
-                    pass
-                elif sub_type == "invite":
-                    # 直接同意，你可以自己写逻辑判断是否通过
-                    # set_group_invite_request(flag, "true")
-                    pass
+            pass
         return right("ok")
 
     message = js['message']
-    chat = make_chat(message)
-    js_param = {
-        "from": "qq",
-        "time": "1676443000",
+    my_time = get_time()
+    qq = QQ_temp(user_id, MY_QQ_ID, my_time, message)
+
+    all_list = QQ_temp.query.filter(QQ_temp.tstamp.__ge__(int(my_time) -
+                                                          200)).all()
+    msg_list = []
+    for it in all_list:
+        if it.from_id == MY_QQ_ID:
+            if it.to_id == user_id:
+                msg_list.append({"role": "assistant", "content": it.text})
+        if it.from_id == user_id:
+            if it.to_id == MY_QQ_ID:
+                msg_list.append({"role": "user", "content": it.text})
+    msg_list.append({"role": "user", "content": message})
+    # for it in msg_list:
+    #     print(it)
+
+    chat = make_chat(msg_list)
+    to_chat = {
+        "from": user_id,
+        "time": get_time(),
         "messages": chat,
         "id": 2,
         "token": "xue_JesAbMQxYQoq"
     }
     if js['message_type'] == 'private':
-        ans = requests.post(url=REMOTE_URL, json=js_param).json()
+        ans = requests.post(url=REMOTE_URL, json=to_chat).json()
+        qq2 = QQ_temp(MY_QQ_ID, user_id, my_time, ans['msg']['answer'])
         qq_send = {"user_id": user_id, "message": ans['msg']['answer']}
         requests.post(url=QQ_PRITE_URL, json=qq_send)
+        with app.app_context():
+            db.session.add(qq)
+            db.session.add(qq2)
+            db.session.commit()
     else:
         if str("[CQ:at,qq=%s]" % MY_QQ_ID) in message:
-            ans = requests.post(url=REMOTE_URL, json=js_param).json()
+            ans = requests.post(url=REMOTE_URL, json=to_chat).json()
+            qq2 = QQ_temp(MY_QQ_ID, user_id, my_time, ans['msg']['answer'])
             qq_send = {
                 "group_id": js['group_id'],
                 "message": ans['msg']['answer']
             }
             requests.post(url=QQ_GROUP_URL, json=qq_send)
+            with app.app_context():
+                db.session.add(qq)
+                db.session.add(qq2)
+                db.session.commit()
     return right('ok')
 
 

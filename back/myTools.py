@@ -79,14 +79,8 @@ def rename_img(name: str, id: int):
     return fname
 
 
-def make_chat(msg: str):
-    return [
-        {
-            "role": "system",
-            "content": "你是一个聊天机器人，负责和用户沟通，回答问题时要简洁明了。"
-        },
-        {
-            "role": "user",
-            "content": msg
-        },
-    ]
+def make_chat(msg: list):
+    ans = [{"role": "system", "content": "你是一个聊天机器人，负责和用户沟通，回答问题时要简洁明了。"}]
+    for it in msg:
+        ans.append(it)
+    return ans

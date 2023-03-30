@@ -27,3 +27,4 @@ STATIC_FOLDER = 'static/'
 
 QQ_PRITE_URL = 'http://127.0.0.1:5700/send_private_msg'
 QQ_GROUP_URL = 'http://127.0.0.1:5700/send_group_msg'
+QQ_BAN_URL = 'http://127.0.0.1:5700/set_group_ban'

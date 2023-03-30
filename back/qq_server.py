@@ -25,7 +25,7 @@ def do_talk(js: dict, group_id: int):
     message = js['message']
 
     all_pre = QQ_temp.query.filter(QQ_temp.tstamp.__ge__(int(my_time) -
-                                                         240)).all()
+                                                         200)).all()
     my_chat = [sys_msg]
     for it in all_pre:
         if it.from_id == MY_QQ_ID:
@@ -127,6 +127,7 @@ def do_group(js: dict):
     if str(MY_QQ_ID) not in message:
         return
 
+    message = message.replace(f'[CQ:at,qq={MY_QQ_ID}]', '').strip()
     group_id = int(js['group_id'])
     user_id = int(js['user_id'])
     ans = get_ans(js, group_id)

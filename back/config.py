@@ -29,11 +29,12 @@ QQ_PRITE_URL = 'http://127.0.0.1:5700/send_private_msg'
 QQ_GROUP_URL = 'http://127.0.0.1:5700/send_group_msg'
 QQ_BAN_URL = 'http://127.0.0.1:5700/set_group_ban'
 
-SERVE_QQ = ['help', '帮助', '禁言', '图片', '照片']
 SERVE_QQ_CODE = {
     'help': 1,
     '帮助': 1,
     '禁言': 2,
     '图片': 3,
     '照片': 3,
+    '语音': 4,
+    '声音': 4,
 }

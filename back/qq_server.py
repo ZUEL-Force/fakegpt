@@ -4,7 +4,7 @@ from random import randint
 import requests
 import re
 
-from config import QQ_PRITE_URL, QQ_BAN_URL, QQ_GROUP_URL, SERVE_QQ, SERVE_QQ_CODE
+from config import QQ_PRITE_URL, QQ_BAN_URL, QQ_GROUP_URL, SERVE_QQ_CODE
 from mybasic import db
 from myTools import *
 from tables import QQ_temp
@@ -12,7 +12,7 @@ from private import REMOTE_URL, MY_QQ_ID
 
 
 def check_key(msg: str):
-    for it in SERVE_QQ:
+    for it in SERVE_QQ_CODE.keys():
         if it in msg:
             return SERVE_QQ_CODE[it]
     return 0
@@ -86,6 +86,13 @@ def do_pic(js: dict):
     return ("[CQ:image,file=%s]" % img_url)
 
 
+def do_autio(js: dict):
+    i_rand = randint(0, 13)
+    img_url = rf'E:\githubLib\zuel_force\fakegpt\back\static\audio\{i_rand}.wav'
+    img_url = Path.as_uri(Path(img_url))
+    return ("[CQ:record,file=%s]" % img_url)
+
+
 def get_ans(js: dict, gid: int):
     scode = check_key(js['message'])
     if scode == 0:
@@ -99,6 +106,8 @@ def get_ans(js: dict, gid: int):
             ans = do_ban(js)
     elif scode == 3:
         ans = do_pic(js)
+    elif scode == 4:
+        ans = do_autio(js)
     return ans
 
 

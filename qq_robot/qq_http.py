@@ -1,7 +1,7 @@
 import json
 
 from flask import request
-
+from my_tools import *
 from mybasic import app
 from qq_server import *
 
@@ -21,9 +21,7 @@ def myqq():
     return right("ok")
 
 
-# TODO: 机器人发语音、发图片
-
 if __name__ == '__main__':
-    # init_db()
-    app.run(debug=True, host="0.0.0.0", port=11112)
+    init_db()
+    app.run(debug=True, host="0.0.0.0", port=11114)
     # app.run(host="0.0.0.0", port=11112)

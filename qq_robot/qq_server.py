@@ -1,21 +1,12 @@
-from pathlib import Path
-
-from random import randint
-import requests
 import re
+from pathlib import Path
+from random import randint
 
-from config import QQ_PRITE_URL, QQ_BAN_URL, QQ_GROUP_URL, SERVE_QQ_CODE
+import requests
+from my_tools import *
 from mybasic import db
-from myTools import *
+from private import *
 from tables import QQ_temp
-from private import REMOTE_URL, MY_QQ_ID
-
-
-def check_key(msg: str):
-    for it in SERVE_QQ_CODE.keys():
-        if it in msg:
-            return SERVE_QQ_CODE[it]
-    return 0
 
 
 def do_talk(js: dict, group_id: int):
@@ -38,16 +29,10 @@ def do_talk(js: dict, group_id: int):
                     my_chat.append({"role": "user", "content": it.text})
     my_chat.append({"role": "user", "content": message})
 
-    to_chat = {
-        "from": user_id,
-        "time": get_time(),
-        "messages": my_chat,
-        "id": 2,
-        "token": "xue_JesAbMQxYQoq"
-    }
-    ans = requests.post(url=REMOTE_URL, json=to_chat).json()
+    to_chat = {"messages": my_chat}
+    ans = requests.post(url=GPT_URL, json=to_chat).json()
     if ans['state'] == 0:
-        return ans['msg']['answer']
+        return ans['msg']['result']
     return '响应超时，请稍后重试。'
 
 
@@ -74,16 +59,10 @@ def do_ban(js: dict):
 
 def do_pic(js: dict):
     message = js['message']
-
-    rand_i = randint(-5, 13)
-    if "杰哥" in message:
-        rand_i = 9
-        img_url = rf'E:\githubLib\zuel_force\fakegpt\back\static\img\{rand_i}.png'
-    img_url = rf'E:\githubLib\zuel_force\fakegpt\back\static\img\{rand_i}.png'
-    if not Path.exists(Path(img_url)):
-        img_url = rf'E:\githubLib\zuel_force\fakegpt\back\static\img\{rand_i}.jpg'
-    img_url = Path.as_uri(Path(img_url))
-    return ("[CQ:image,file=%s]" % img_url)
+    ans = requests.post(url=CREATE_IMG_URL, json={"messages": message}).json()
+    if ans['state'] == 1:
+        return ans['msg']['result']
+    return ("[CQ:image,file=%s]" % ans['msg']['result'])
 
 
 def do_autio(js: dict):

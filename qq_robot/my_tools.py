@@ -3,7 +3,14 @@ import random
 import time
 
 from flask import jsonify
-from mybasic import app
+from mybasic import app, db
+from private import *
+
+
+def init_db():
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
 
 
 def get_salt(margin: int = 64):
@@ -32,3 +39,10 @@ def right(msg: str = 'ok'):
 
 def get_time():
     return int(time.time())
+
+
+def check_key(msg: str):
+    for it in SERVE_QQ_CODE.keys():
+        if it in msg:
+            return SERVE_QQ_CODE[it]
+    return 0

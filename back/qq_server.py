@@ -21,7 +21,7 @@ def check_key(msg: str):
 def do_talk(js: dict, group_id: int):
     my_time = get_time()
     user_id = int(js['user_id'])
-    sys_msg = {"role": "system", "content": "你是一个聊天机器人，名字是Raiden，负责和用户沟通。"}
+    sys_msg = {"role": "system", "content": "你是一个聊天机器人，名字是Walnut，负责和用户沟通。"}
     message = js['message']
 
     all_pre = QQ_temp.query.filter(QQ_temp.tstamp.__ge__(int(my_time) -
@@ -89,6 +89,7 @@ def do_pic(js: dict):
 def do_autio(js: dict):
     i_rand = randint(0, 13)
     img_url = rf'E:\githubLib\zuel_force\fakegpt\back\static\audio\{i_rand}.wav'
+    # img_url = rf'E:\githubLib\zuel_force\fakegpt\back\static\audio\9.wav'
     img_url = Path.as_uri(Path(img_url))
     return ("[CQ:record,file=%s]" % img_url)
 
@@ -137,6 +138,7 @@ def do_group(js: dict):
         return
 
     message = message.replace(f'[CQ:at,qq={MY_QQ_ID}]', '').strip()
+    js['message'] = message
     group_id = int(js['group_id'])
     user_id = int(js['user_id'])
     ans = get_ans(js, group_id)

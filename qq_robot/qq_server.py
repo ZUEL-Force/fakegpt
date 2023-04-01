@@ -12,7 +12,7 @@ from tables import QQ_temp
 def do_talk(js: dict, group_id: int):
     my_time = get_time()
     user_id = int(js['user_id'])
-    sys_msg = {"role": "system", "content": "你是一个聊天机器人，名字是Walnut，负责和用户沟通。"}
+    sys_msg = {"role": "system", "content": "你是一个聊天机器人，名字是KoKomi，负责和用户沟通。"}
     message = js['message']
 
     all_pre = QQ_temp.query.filter(QQ_temp.tstamp.__ge__(int(my_time) -

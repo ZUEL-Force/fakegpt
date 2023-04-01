@@ -4,7 +4,6 @@ from api_openai import *
 from flask import request
 from mybasic import app
 from myTools import *
-from private import MODEL, MY_REASON
 
 
 @app.route('/talk/', methods=['POST'])

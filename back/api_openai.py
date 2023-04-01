@@ -41,12 +41,12 @@ def dalle(prompt: str):
 
         response = requests.get(image_url)
         img = Image.open(BytesIO(response.content))
-        img_name = get_salt(6)
-        img.save(f"{PROJECT_PATH}/{IMG_FOLDER}/{img_name}.jpg")
+        img_name = get_salt(6) + '.jpg'
+        img.save(f"{PROJECT_PATH}/{IMG_FOLDER}/{img_name}")
 
         image_url = f"{PROJECT_PATH}/{IMG_FOLDER}/{img_name}.jpg"
         image_url = Path.as_uri(Path(image_url))
-        return image_url, 0
+        return f'{IMG_FOLDER}{img_name}', 0
     except:
         return '图像生成失败，请稍后再试。', 1
 

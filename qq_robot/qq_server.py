@@ -62,10 +62,13 @@ def do_pic(js: dict):
     ans = requests.post(url=CREATE_IMG_URL, json={"messages": message}).json()
     if ans['state'] == 1:
         return ans['msg']['result']
-    return ("[CQ:image,file=%s]" % ans['msg']['result'])
+    img_path = IMG_REMOTE + ans['msg']['result']
+    return ("[CQ:image,file=%s]" % img_path)
 
 
 def do_autio(js: dict, gid: int):
+    message = js['message']
+
     i_rand = randint(0, 13)
     audio_url = rf'E:\githubLib\zuel_force\fakegpt\back\static\audio\{i_rand}.wav'
     audio_url = Path.as_uri(Path(audio_url))
@@ -94,7 +97,7 @@ def get_ans(js: dict, gid: int):
     elif scode == 3:
         ans = do_pic(js)
     elif scode == 4:
-        ans = do_autio(js, gid)
+        ans = do_autio(js)
     elif scode == 5:
         ans = do_alter_audio(js)
     elif scode == 6:

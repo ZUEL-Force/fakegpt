@@ -65,12 +65,19 @@ def do_pic(js: dict):
     return ("[CQ:image,file=%s]" % ans['msg']['result'])
 
 
-def do_autio(js: dict):
+def do_autio(js: dict, gid: int):
     i_rand = randint(0, 13)
-    img_url = rf'E:\githubLib\zuel_force\fakegpt\back\static\audio\{i_rand}.wav'
-    # img_url = rf'E:\githubLib\zuel_force\fakegpt\back\static\audio\9.wav'
-    img_url = Path.as_uri(Path(img_url))
-    return ("[CQ:record,file=%s]" % img_url)
+    audio_url = rf'E:\githubLib\zuel_force\fakegpt\back\static\audio\{i_rand}.wav'
+    audio_url = Path.as_uri(Path(audio_url))
+    return ("[CQ:record,file=%s]" % audio_url)
+
+
+def do_alter_audio(js: dict):
+    pass
+
+
+def do_repeat(js: dict):
+    pass
 
 
 def get_ans(js: dict, gid: int):
@@ -87,7 +94,11 @@ def get_ans(js: dict, gid: int):
     elif scode == 3:
         ans = do_pic(js)
     elif scode == 4:
-        ans = do_autio(js)
+        ans = do_autio(js, gid)
+    elif scode == 5:
+        ans = do_alter_audio(js)
+    elif scode == 6:
+        ans = do_repeat(js)
     return ans
 
 

@@ -1,18 +1,22 @@
 import re
+from io import BytesIO
 from pathlib import Path
 from random import randint
 
 import requests
 from my_tools import *
 from mybasic import db
+from PIL import Image
 from private import *
 from tables import QQ_temp
+
+speaker = 'kokomi'
 
 
 def do_talk(js: dict, group_id: int):
     my_time = get_time()
     user_id = int(js['user_id'])
-    sys_msg = {"role": "system", "content": "你是一个聊天机器人，名字是KoKomi，负责和用户沟通。"}
+    sys_msg = {"role": "system", "content": "你是一个聊天机器人，名字是“珊瑚宫心海”，负责和用户沟通。"}
     message = js['message']
 
     all_pre = QQ_temp.query.filter(QQ_temp.tstamp.__ge__(int(my_time) -
@@ -32,6 +36,10 @@ def do_talk(js: dict, group_id: int):
     to_chat = {"messages": my_chat}
     ans = requests.post(url=GPT_URL, json=to_chat).json()
     if ans['state'] == 0:
+        text = ans['msg']['result']
+        if len(text) < 75:
+            if randint(1, 3) != 2:
+                return do_repeat({'message': text})
         return ans['msg']['result']
     return '响应超时，请稍后重试。'
 
@@ -62,8 +70,14 @@ def do_pic(js: dict):
     ans = requests.post(url=CREATE_IMG_URL, json={"messages": message}).json()
     if ans['state'] == 1:
         return ans['msg']['result']
-    img_path = IMG_REMOTE + ans['msg']['result']
-    return ("[CQ:image,file=%s]" % img_path)
+
+    img_url = ans['msg']['result']
+    res = requests.get(img_url)
+    img = Image.open(BytesIO(res.content))
+    img_name = get_salt(6) + '.jpg'
+    img.save(IMG_ABSOLUTE + img_name)
+    img_url = Path.as_uri(Path(IMG_ABSOLUTE + img_name))
+    return ("[CQ:image,file=%s]" % img_url)
 
 
 def do_autio(js: dict, gid: int):
@@ -76,11 +90,41 @@ def do_autio(js: dict, gid: int):
 
 
 def do_alter_audio(js: dict):
-    pass
+    global speaker
+
+    message = str(js['message'])
+    message = message.replace('音色', '')
+    message = message.replace('音色：', '')
+    message = message.replace('音色:', '')
+    message = message.strip()
+
+    ans = requests.post(SPEAKERS_URL).json()
+    sdict = ans['msg']['result']
+    if message in sdict.keys():
+        speaker = message
+        welcome = {'message': sdict[speaker]['text']}
+        return do_repeat(welcome)
+    else:
+        return f"切换失败，{message}音色不存在"
 
 
 def do_repeat(js: dict):
-    pass
+    global speaker
+
+    message = str(js['message'])
+    message = message.replace('复读', '')
+    message = message.replace('复读：', '')
+    message = message.replace('复读:', '')
+    if len(message) == 0:
+        return '复读内容过短'
+
+    ans = requests.post(TTS_URL, json={
+        'message': message,
+        'speaker': speaker
+    }).json()
+    audio_url = AUDIO_REMOTE + ans['msg']['result']
+    print(audio_url)
+    return ("[CQ:record,file=%s]" % audio_url)
 
 
 def get_ans(js: dict, gid: int):

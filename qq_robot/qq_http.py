@@ -3,6 +3,7 @@ import json
 from flask import request
 from my_tools import *
 from mybasic import app
+from private import *
 from qq_server import *
 
 
@@ -23,5 +24,5 @@ def myqq():
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, host="0.0.0.0", port=11114)
+    app.run(debug=True, host="0.0.0.0", port=MY_APP_PORT)
     # app.run(host="0.0.0.0", port=11112)

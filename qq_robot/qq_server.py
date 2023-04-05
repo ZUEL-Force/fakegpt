@@ -114,7 +114,7 @@ def do_repeat(js: dict):
     message = message.replace('复读：', '')
     message = message.replace('复读:', '')
     if len(message) == 0:
-        return '复读内容过短'
+        return 'E:复读内容过短'
 
     ans = requests.post(TTS_URL, json={
         'message': message,

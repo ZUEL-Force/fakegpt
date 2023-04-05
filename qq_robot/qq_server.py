@@ -38,7 +38,7 @@ def do_talk(js: dict, group_id: int):
     if ans['state'] == 0:
         text = ans['msg']['result']
         if len(text) <= 100:
-            if randint(1, 5) <= 3:
+            if randint(1, 5) <= 2:
                 return do_repeat({'message': text})
         return ans['msg']['result']
     return '响应超时，请稍后重试。'

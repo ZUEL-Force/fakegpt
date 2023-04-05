@@ -37,7 +37,7 @@ def do_talk(js: dict, group_id: int):
     ans = requests.post(url=GPT_URL, json=to_chat).json()
     if ans['state'] == 0:
         text = ans['msg']['result']
-        if len(text) < 75:
+        if len(text) <= 100:
             if randint(1, 5) <= 3:
                 return do_repeat({'message': text})
         return ans['msg']['result']
@@ -115,6 +115,8 @@ def do_repeat(js: dict):
     message = message.replace('复读:', '')
     if len(message) == 0:
         return 'E:复读内容过短'
+    elif len(message) > 100:
+        return '复读内容过长'
 
     ans = requests.post(TTS_URL, json={
         'message': message,

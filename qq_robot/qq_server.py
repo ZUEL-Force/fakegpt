@@ -122,9 +122,12 @@ def do_repeat(js: dict):
         'message': message,
         'speaker': speaker
     }).json()
-    audio_url = AUDIO_REMOTE + ans['msg']['result']
-    # print(audio_url)
-    return ("[CQ:record,file=%s]" % audio_url)
+    if ans['state'] == 0:
+        audio_url = AUDIO_REMOTE + ans['msg']['result']
+        # print(audio_url)
+        return ("[CQ:record,file=%s]" % audio_url)
+    else:
+        return ans['msg']['result']
 
 
 def get_ans(js: dict, gid: int):

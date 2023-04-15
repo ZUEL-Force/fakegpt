@@ -130,6 +130,13 @@ def do_repeat(js: dict):
         return ans['msg']['result']
 
 
+def do_emotion():
+    index = randint(0, 9)
+    file_name = f'表情包{index}.jpg'
+    emotion_url = Path.as_uri(Path(EMOTION_ABSOLUTE + file_name))
+    return ("[CQ:image,file=%s]" % emotion_url)
+
+
 def get_ans(js: dict, gid: int):
     scode = check_key(js['message'])
     if scode == 0:
@@ -149,6 +156,8 @@ def get_ans(js: dict, gid: int):
         ans = do_repeat(js)
     # elif scode == 4:
     #     ans = do_autio(js)
+    elif scode == 7:
+        ans = do_emotion()
     return ans
 
 

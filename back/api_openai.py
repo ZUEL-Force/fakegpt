@@ -23,6 +23,18 @@ def chatgpt(que: list):
         return "后端连接超时，请稍后再试。", 1
 
 
+def chatgpt_stream(que: list):
+    try:
+        response = openai.ChatCompletion.create(model=MODEL[0],
+                                                messages=que,
+                                                stream=True)
+        for it in response:
+            for choice in it.choices:
+                yield choice.delta.content if "content" in choice.delta else ""
+    except:
+        return "server error, please try again later."
+
+
 #TODO:语音转文字
 def whisper(file: str):
     try:

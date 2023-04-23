@@ -1,7 +1,7 @@
 import json
 
 from api_openai import *
-from flask import Response, request
+from flask import Response, request, stream_with_context
 from mybasic import app
 from myTools import *
 
@@ -29,7 +29,8 @@ def stream_talk():
     if que == None:
         return wrong({'result': "Parameter error"})
 
-    return Response(chatgpt_stream(que), mimetype='text/plain')
+    return Response(stream_with_context(get_stream(que)),
+                    content_type='application/json')
 
 
 @app.route('/create_img/', methods=['POST'])

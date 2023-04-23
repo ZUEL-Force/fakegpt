@@ -1,7 +1,10 @@
 import hashlib
+import json
 import random
 import time
 
+# from api_openai import chatgpt_stream
+import api_openai
 from flask import jsonify
 from mybasic import app
 
@@ -32,3 +35,16 @@ def right(msg: str = 'ok'):
 
 def get_time():
     return int(time.time())
+
+
+def get_stream(que: list):
+    i = 0
+    temp = ""
+    for ans in api_openai.chatgpt_stream(que):
+        temp += ans
+        result = {"state": 0, "msg": {"result": temp}}
+        data = json.dumps(result)
+        if i != 0:
+            data = '\n' + data
+        i += 1
+        yield data

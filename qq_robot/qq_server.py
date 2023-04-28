@@ -159,6 +159,7 @@ def do_neteasy_music():
 def do_baike(js: dict):
     msg = str(js['message'])
     msg = msg.replace('百度', '')
+    msg = msg.replace('百科', '')
     msg = msg.strip()
     if len(msg) > 10:
         return '搜索内容过长，请稍后再试。'

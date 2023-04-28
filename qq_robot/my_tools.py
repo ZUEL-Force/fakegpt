@@ -66,11 +66,17 @@ def get_weather(city: str):
     param = {'key': WEATHER_KEY, 'location': city}
     try:
         responce = dict(requests.get(WEATHER_URL, params=param).json())
-        result = list(responce['results'])
-        city_path = result[0]['path']
-        city_weather = result[1]['text']
-        city_temperature = int(result[1])
-        ans = f'{city_path} 的气温是{city_temperature}摄氏度，天气：{city_weather}'
+        result = responce['results'][0]
+        city_path = result['location']['path']
+        city_weather = result['now']['text']
+        city_temperature = int(result['now']['temperature'])
+        city_order = str(city_path).split(',')
+        city_order.reverse()
+        city_order.pop()
+        my_city = ''
+        for it in city_order:
+            my_city += it
+        ans = f'{my_city} 气温：{city_temperature}℃，天气：{city_weather}'
         return ans, 0
     except:
         return '天气获取失败，请稍后再试', 1

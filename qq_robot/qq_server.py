@@ -198,6 +198,7 @@ def do_weather(js: dict):
     msg = msg.strip()
 
     result, state = get_weather(msg)
+    print(f'msg={msg},result={result}')
     return result
 
 

@@ -71,6 +71,7 @@ def get_weather(city: str):
         city_weather = result[1]['text']
         city_temperature = int(result[1])
         ans = f'{city_path} 的气温是{city_temperature}摄氏度，天气：{city_weather}'
+        return ans, 0
     except:
         return '天气获取失败，请稍后再试', 1
 

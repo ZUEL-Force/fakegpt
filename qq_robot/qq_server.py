@@ -137,6 +137,25 @@ def do_emotion():
     return ("[CQ:image,file=%s]" % emotion_url)
 
 
+def do_neteasy_music(js: dict):
+    choice = MUSIC_CHOICE[randint(0, len(MUSIC_CHOICE) - 1)]
+    param = {'sort': choice, 'format': 'json'}
+    try:
+        responce = requests.get(NET_EASY_MUSIC, params=param)
+        responce.raise_for_status()
+        responce.encoding = responce.apparent_encoding
+        text = responce.text
+        if 'id' in text:
+            pattern = r'id=(\d+)'
+            match = re.search(pattern, text)
+            if match:
+                music_id = int(match.group(1))
+                return f'[CQ:music,type=163,id={music_id}]'
+        return '点歌失败，请稍后重试。'
+    except:
+        return '点歌失败，请稍后重试。'
+
+
 def get_ans(js: dict, gid: int):
     scode = check_key(js['message'])
     if scode == 0:
@@ -158,6 +177,8 @@ def get_ans(js: dict, gid: int):
     #     ans = do_autio(js)
     elif scode == 7:
         ans = do_emotion()
+    elif scode == 8:
+        ans = do_neteasy_music(js)
     return ans
 
 

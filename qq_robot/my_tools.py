@@ -49,6 +49,19 @@ def check_key(msg: str):
     return 0
 
 
+def get_que_key(msg: str):
+    sys_msg = {"role": "system", "content": SYSTEM_MSG}
+    user_que = {"role": "user", "content": msg}
+    my_chat = [sys_msg, user_que]
+    to_chat = {"messages": my_chat}
+    ans = requests.post(url=GPT_URL, json=to_chat).json()
+    if ans['state'] == 0:
+        text = str(ans['msg']['result'])
+        keys = text.split(' ')
+        return keys
+    return []
+
+
 def to_baike(bk_key: str):
     param = {'appid': BAIKE_ID, 'bk_key': bk_key}
     try:

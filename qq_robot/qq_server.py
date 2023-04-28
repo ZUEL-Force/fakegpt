@@ -40,7 +40,7 @@ def do_talk(js: dict, group_id: int):
         if len(text) <= 100:
             if randint(1, 5) <= 2:
                 return do_repeat({'message': text})
-        return ans['msg']['result']
+        return text
     return '响应超时，请稍后重试。'
 
 
@@ -162,7 +162,7 @@ def do_baike(js: dict):
     msg = msg.replace('百科', '')
     msg = msg.strip()
     if len(msg) > 10:
-        return '搜索内容过长，请稍后再试。'
+        return '搜索内容过长。'
     res, state = to_baike(msg)
     return res
 

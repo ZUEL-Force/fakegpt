@@ -212,6 +212,8 @@ def get_ans(js: dict, gid: int):
         ans = do_neteasy_music()
     elif scode == 9:
         ans = do_baike(js)
+    elif scode == 10:
+        ans = do_searchs(js)
     return ans
 
 

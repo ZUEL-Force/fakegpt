@@ -192,6 +192,15 @@ def do_searchs(js: dict):
     return '后台服务超时，请稍后再试。'
 
 
+def do_weather(js: dict):
+    msg = str(js['message'])
+    msg = msg.replace('天气', '')
+    msg = msg.strip()
+
+    result, state = get_weather(msg)
+    return result
+
+
 def get_ans(js: dict, gid: int):
     scode = check_key(js['message'])
     ans = '后台服务超时，请稍后再试'
@@ -220,6 +229,8 @@ def get_ans(js: dict, gid: int):
         ans = do_baike(js)
     elif scode == 10:
         ans = do_searchs(js)
+    elif scode == 11:
+        ans = do_weather(js)
     return ans
 
 

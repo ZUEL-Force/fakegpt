@@ -178,7 +178,7 @@ def do_searchs(js: dict):
         if state == 0:
             user_msg = {"role": "user", "content": text}
             my_chat.append(user_msg)
-    my_chat.append({"role": "user", "content": text})
+    my_chat.append({"role": "user", "content": msg})
     to_chat = {"messages": my_chat}
     ans = requests.post(url=GPT_URL, json=to_chat).json()
     if ans['state'] == 0:

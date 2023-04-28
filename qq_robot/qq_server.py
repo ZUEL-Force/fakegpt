@@ -189,6 +189,7 @@ def do_searchs(js: dict):
 
 def get_ans(js: dict, gid: int):
     scode = check_key(js['message'])
+    ans = '后台服务超时，请稍后再试'
     if scode == 0:
         ans = do_talk(js, gid)
     elif scode == 1:

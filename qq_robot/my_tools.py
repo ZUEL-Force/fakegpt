@@ -1,4 +1,5 @@
 import hashlib
+import requests
 import random
 import time
 
@@ -46,3 +47,13 @@ def check_key(msg: str):
         if it in msg:
             return SERVE_QQ_CODE[it]
     return 0
+
+
+def to_baike(bk_key: str):
+    param = {'appid': BAIKE_ID, 'bk_key': bk_key}
+    try:
+        responce = dict(requests.get(BAIDU_BAIKE, params=param).json())
+        text = responce['abstract']
+        return text, 0
+    except:
+        return '百度百科接口超时，请稍后再试。', 1

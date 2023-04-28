@@ -137,7 +137,7 @@ def do_emotion():
     return ("[CQ:image,file=%s]" % emotion_url)
 
 
-def do_neteasy_music(js: dict):
+def do_neteasy_music():
     choice = MUSIC_CHOICE[randint(0, len(MUSIC_CHOICE) - 1)]
     param = {'sort': choice, 'format': 'json'}
     try:
@@ -154,6 +154,16 @@ def do_neteasy_music(js: dict):
         return '点歌失败，请稍后重试。'
     except:
         return '点歌失败，请稍后重试。'
+
+
+def do_baike(js: dict):
+    msg = str(js['message'])
+    msg.replace('百度', '')
+    msg.strip()
+    if len(msg) > 10:
+        return '搜索内容过长，请稍后再试。'
+    res, state = to_baike(msg)
+    return res
 
 
 def get_ans(js: dict, gid: int):
@@ -178,7 +188,9 @@ def get_ans(js: dict, gid: int):
     elif scode == 7:
         ans = do_emotion()
     elif scode == 8:
-        ans = do_neteasy_music(js)
+        ans = do_neteasy_music()
+    elif scode == 9:
+        ans = do_baike(js)
     return ans
 
 

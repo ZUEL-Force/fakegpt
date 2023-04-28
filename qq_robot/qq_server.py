@@ -167,6 +167,26 @@ def do_baike(js: dict):
     return res
 
 
+def do_searchs(js: dict):
+    sys_msg = {"role": "system", "content": SYSTEM_MSG}
+    my_chat = [sys_msg]
+
+    msg = str(js['message'])
+    keys = get_que_key(msg)
+    for key in keys:
+        text, state = to_baike(key)
+        if state == 0:
+            user_msg = {"role": "user", "content": text}
+            my_chat.append(user_msg)
+    my_chat.append({"role": "user", "content": text})
+    to_chat = {"messages": my_chat}
+    ans = requests.post(url=GPT_URL, json=to_chat).json()
+    if ans['state'] == 0:
+        text = str(ans['msg']['result'])
+        return text
+    return '后台服务超时，请稍后再试。'
+
+
 def get_ans(js: dict, gid: int):
     scode = check_key(js['message'])
     if scode == 0:

@@ -50,7 +50,7 @@ def check_key(msg: str):
 
 
 def get_que_key(msg: str):
-    sys_msg = {"role": "system", "content": SYSTEM_MSG}
+    sys_msg = {"role": "system", "content": SYSTEM_MSG_SEARCH}
     user_que = {"role": "user", "content": msg}
     my_chat = [sys_msg, user_que]
     to_chat = {"messages": my_chat}

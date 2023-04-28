@@ -174,12 +174,17 @@ def do_searchs(js: dict):
     msg = str(js['message'])
     keys = get_que_key(msg)
     for key in keys:
+        print('key=', key)
         text, state = to_baike(key)
         if state == 0:
             user_msg = {"role": "user", "content": text}
             my_chat.append(user_msg)
     my_chat.append({"role": "user", "content": msg})
     to_chat = {"messages": my_chat}
+
+    # for it in to_chat['messages']:
+    #     print(it)
+
     ans = requests.post(url=GPT_URL, json=to_chat).json()
     if ans['state'] == 0:
         text = str(ans['msg']['result'])

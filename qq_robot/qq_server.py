@@ -151,9 +151,9 @@ def do_neteasy_music():
             if match:
                 music_id = int(match.group(1))
                 return f'[CQ:music,type=163,id={music_id}]'
-        return '点歌失败，请稍后重试。'
+        return '网易云失败，请稍后重试。'
     except:
-        return '点歌失败，请稍后重试。'
+        return '网易云失败，请稍后重试。'
 
 
 def do_baike(js: dict):
@@ -202,6 +202,44 @@ def do_weather(js: dict):
     return result
 
 
+def do_clear_sing(js: dict):
+    msg = str(js['message'])
+    msg = msg.replace('清唱', '')
+    msg = msg.strip()
+
+    if len(msg) == 0:
+        return '请指定歌名'
+
+    if speaker not in SINGER_DICT.keys():
+        return '当前音色不支持唱歌'
+
+    if msg not in SONG_DICT.keys():
+        return '当前歌曲暂未收录'
+
+    clear_path = Path.joinpath(Path(SINGER_DICT[speaker]), 'clear')
+    clear_path = Path.joinpath(clear_path, f'{SONG_DICT[msg]}.wav')
+    return '[CQ:record,file=%s]' % clear_path.as_uri()
+
+
+def do_sing(js: dict):
+    msg = str(js['message'])
+    msg = msg.replace('清唱', '')
+    msg = msg.strip()
+
+    if len(msg) == 0:
+        return '请指定歌名'
+
+    if speaker not in SINGER_DICT.keys():
+        return '当前音色不支持唱歌'
+
+    if msg not in SONG_DICT.keys():
+        return '当前歌曲暂未收录'
+
+    sing_path = Path.joinpath(Path(SINGER_DICT[speaker]), 'clear')
+    sing_path = Path.joinpath(sing_path, f'{SONG_DICT[msg]}.wav')
+    return '[CQ:record,file=%s]' % sing_path.as_uri()
+
+
 def get_ans(js: dict, gid: int):
     scode = check_key(js['message'])
     ans = '后台服务超时，请稍后再试'
@@ -232,6 +270,10 @@ def get_ans(js: dict, gid: int):
         ans = do_searchs(js)
     elif scode == 11:
         ans = do_weather(js)
+    elif scode == 12:
+        ans = do_clear_sing(js)
+    elif scode == 13:
+        ans = do_sing(js)
     return ans
 
 

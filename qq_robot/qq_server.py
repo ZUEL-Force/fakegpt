@@ -218,7 +218,9 @@ def do_clear_sing(js: dict):
 
     clear_path = Path.joinpath(Path(SINGER_DICT[speaker]), 'clear')
     clear_path = Path.joinpath(clear_path, f'{SONG_DICT[msg]}.wav')
-    return '[CQ:record,file=%s]' % clear_path.as_uri()
+    if clear_path.is_file():
+        return '[CQ:record,file=%s]' % clear_path.as_uri()
+    return '当前歌曲暂未收录'
 
 
 def do_sing(js: dict):
@@ -238,7 +240,9 @@ def do_sing(js: dict):
 
     sing_path = Path.joinpath(Path(SINGER_DICT[speaker]), 'sing')
     sing_path = Path.joinpath(sing_path, f'{SONG_DICT[msg]}.wav')
-    return '[CQ:record,file=%s]' % sing_path.as_uri()
+    if sing_path.is_file():
+        return '[CQ:record,file=%s]' % sing_path.as_uri()
+    return '当前歌曲暂未收录'
 
 
 def get_ans(js: dict, gid: int):

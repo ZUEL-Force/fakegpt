@@ -236,7 +236,7 @@ def do_sing(js: dict):
     if msg not in SONG_DICT.keys():
         return '当前歌曲暂未收录'
 
-    sing_path = Path.joinpath(Path(SINGER_DICT[speaker]), 'clear')
+    sing_path = Path.joinpath(Path(SINGER_DICT[speaker]), 'sing')
     sing_path = Path.joinpath(sing_path, f'{SONG_DICT[msg]}.wav')
     return '[CQ:record,file=%s]' % sing_path.as_uri()
 

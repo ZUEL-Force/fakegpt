@@ -223,7 +223,8 @@ def do_clear_sing(js: dict):
 
 def do_sing(js: dict):
     msg = str(js['message'])
-    msg = msg.replace('清唱', '')
+    msg = msg.replace('点歌', '')
+    msg = msg.replace('唱歌', '')
     msg = msg.strip()
 
     if len(msg) == 0:

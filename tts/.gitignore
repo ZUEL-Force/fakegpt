@@ -3,3 +3,4 @@ private.py
 temp.py
 *.bat
 __pycache__
+/static

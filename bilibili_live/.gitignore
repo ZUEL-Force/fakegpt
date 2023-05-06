@@ -1,0 +1,5 @@
+private.py
+*.exe
+*.bat
+temp.py
+/__pycache__

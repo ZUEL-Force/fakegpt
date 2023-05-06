@@ -13,10 +13,6 @@ from torch import LongTensor, no_grad
 from my_tools import get_salt
 import time
 
-# WAV_PATH = '/home/jojo/mycode/gitlib/MoeGoe/my_pth/test2.wav'
-# MODEL_PATH = '/home/jojo/mycode/gitlib/MoeGoe/my_pth/raiden.pth'
-# CONFIG_PATH = '/home/jojo/mycode/gitlib/MoeGoe/my_pth/config.json'
-
 logging.getLogger('numba').setLevel(logging.WARNING)
 
 

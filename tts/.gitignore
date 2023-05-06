@@ -2,3 +2,5 @@ private.py
 /old
 temp.py
 *.bat
+__pycache__
+/static

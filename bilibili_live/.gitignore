@@ -3,3 +3,4 @@ private.py
 *.bat
 temp.py
 /__pycache__
+*.wav

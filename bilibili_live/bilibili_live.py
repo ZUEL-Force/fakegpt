@@ -111,10 +111,11 @@ def play_read():
         # print(
         #     f'\033[32mSystem>>\033[0m开始播放output{temp}，当前待播语音数：{playqueue_count}'
         # )
-        with open('audio.wav', 'wb') as f:
+        audio_name = temp[-10:]
+        with open(audio_name, 'wb') as f:
             f.write(requests.get(temp).content)
-        subprocess.run(f'mpv.exe -vo null audio.wav 1>nul', shell=True)
-        subprocess.run(f'del audio.wav', shell=True)
+        subprocess.run(f'mpv.exe -vo null {audio_name} 1>nul', shell=True)
+        subprocess.run(f'del {audio_name}', shell=True)
         # subprocess.run(f'mpv.exe -vo null {temp} 1>nul', shell=True)
     is_play_ready = True
 

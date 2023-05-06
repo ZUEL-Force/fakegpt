@@ -1,4 +1,4 @@
-# fake_gpt3
+# fake_gpt
 
 这是一个尝试利用openai_api做点什么的小项目，仅用于学习和测试。
 

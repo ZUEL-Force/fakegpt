@@ -2,19 +2,19 @@
 
 这是一个尝试利用openai_api做点什么的小项目，仅用于学习和测试。
 
-## web端gpt聊天
+### web端gpt聊天
 
 这个是尝试复刻一个openai官网式的聊天，主要是练手。
 
-## 移动端gpt聊天
+### 移动端gpt聊天
 
 其实就是把web端打包成了安卓apk，和web端差不多。
 
-## qq机器人
+### qq机器人
 
 利用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp.git)控制qq，gpt生成回复。当然你还可以把ai作图和语音回复等也缝合进去。
 
-## b站直播
+### b站直播
 
 gpt与弹幕互动，利用[语音合成](https://github.com/CjangCjengh/MoeGoe)把gpt的回复播出来。这里使用了[bilibili-api](https://github.com/Nemo2011/bilibili-api)，代码修改自[AI-Vtuber-chatglm](https://github.com/AliceNavigator/AI-Vtuber-chatglm)。
 

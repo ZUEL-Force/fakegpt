@@ -1,3 +1,7 @@
+'''
+代码修改自https://github.com/CjangCjengh/MoeGoe
+'''
+
 import logging
 import random
 import re

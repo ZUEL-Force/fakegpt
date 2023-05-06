@@ -124,9 +124,9 @@ def do_repeat(js: dict):
     }).json()
     if ans['state'] == 0:
         audio_url = AUDIO_REMOTE + ans['msg']['result']
-        audio_file = Path(audio_url)
+        # audio_file = Path(audio_url)
         # print(audio_url)
-        return ("[CQ:record,file=%s]" % audio_file.as_uri())
+        return ("[CQ:record,file=%s]" % audio_url)
     else:
         return ans['msg']['result']
 

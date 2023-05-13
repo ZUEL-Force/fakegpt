@@ -1,4 +1,4 @@
-from my_basic import db
+from my_basic import db, app
 from private import MY_QQ_ID
 from my_class import TEMP_MSG
 
@@ -35,7 +35,8 @@ def get_pre_msgs(msg: TEMP_MSG):
     user_id = msg.fid
     msg_t = msg.tstamp
 
-    all_pre = QQ_MSG.query.filter(QQ_MSG.tstamp.__ge__(msg_t)).all()
+    with app.app_context:
+        all_pre = QQ_MSG.query.filter(QQ_MSG.tstamp.__ge__(msg_t)).all()
 
     pre_chat = []
     for it in all_pre:

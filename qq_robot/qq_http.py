@@ -25,15 +25,15 @@ def myqq():
 
 if __name__ == '__main__':
     init_db()
-    sched.add_job(check_receive,
-                  'interval',
+    sched.add_job(id='check_receive',
+                  func=check_receive,
+                  trigger='interval',
                   seconds=1,
-                  id='receive',
                   max_instances=4)
-    sched.add_job(check_send,
-                  'interval',
+    sched.add_job(id='check_send',
+                  func=check_send,
+                  trigger='interval',
                   seconds=1,
-                  id=f'send',
                   max_instances=4)
 
     sched.start()

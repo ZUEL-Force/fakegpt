@@ -2,35 +2,21 @@ import re
 from io import BytesIO
 from pathlib import Path
 from random import randint
-
 import requests
-from my_tools import *
-from mybasic import db
 from PIL import Image
+
+from my_tools import get_salt, to_baike, get_weather, get_que_key
 from private import *
-from tables import QQ_temp
+from my_tables import get_pre_msgs
 
 speaker = 'kokomi'
 
 
-def do_talk(js: dict, group_id: int):
-    my_time = get_time()
-    user_id = int(js['user_id'])
+def do_talk(message: str):
     sys_msg = {"role": "system", "content": SYSTEM_MSG}
-    message = js['message']
-
-    all_pre = QQ_temp.query.filter(QQ_temp.tstamp.__ge__(int(my_time) -
-                                                         200)).all()
     my_chat = [sys_msg]
-    for it in all_pre:
-        if it.from_id == MY_QQ_ID:
-            if it.to_id == user_id:
-                if it.group_id == group_id:
-                    my_chat.append({"role": "assistant", "content": it.text})
-        if it.to_id == MY_QQ_ID:
-            if it.from_id == user_id:
-                if it.group_id == group_id:
-                    my_chat.append({"role": "user", "content": it.text})
+    pre_chat = get_pre_msgs(None)
+    my_chat += pre_chat
     my_chat.append({"role": "user", "content": message})
 
     to_chat = {"messages": my_chat}
@@ -44,12 +30,11 @@ def do_talk(js: dict, group_id: int):
     return '响应超时，请稍后重试。'
 
 
-def do_help(js: dict):
+def do_help():
     return "胖熊还没写help，以后再说"
 
 
-def do_ban(js: dict):
-    message = js['message']
+def do_ban(message: str, gid: str):
     ban_list = re.findall(r"禁言\[CQ:at,qq=\d+\]", message)
 
     if len(ban_list) != 1 or str(MY_QQ_ID) in ban_list[0]:
@@ -57,7 +42,7 @@ def do_ban(js: dict):
 
     ban_id = re.findall(r"\d+", ban_list[0])[0]
     ban_send = {
-        "group_id": js['group_id'],
+        "group_id": gid,
         "user_id": ban_id,
         "duration": 60,
     }
@@ -65,8 +50,7 @@ def do_ban(js: dict):
     return "好的，已禁言[CQ:at,qq=%s]" % ban_id
 
 
-def do_pic(js: dict):
-    message = js['message']
+def do_pic(message: str):
     ans = requests.post(url=CREATE_IMG_URL, json={"messages": message}).json()
     if ans['state'] == 1:
         return ans['msg']['result']
@@ -87,10 +71,9 @@ def do_pic(js: dict):
 #     return ("[CQ:record,file=%s]" % audio_url)
 
 
-def do_alter_audio(js: dict):
+def do_alter_audio(message: str):
     global speaker
 
-    message = str(js['message'])
     message = message.replace('音色', '')
     message = message.replace('音色：', '')
     message = message.replace('音色:', '')
@@ -106,10 +89,9 @@ def do_alter_audio(js: dict):
         return f"切换失败，{message}音色不存在"
 
 
-def do_repeat(js: dict):
+def do_repeat(message: str):
     global speaker
 
-    message = str(js['message'])
     message = message.replace('复读', '')
     message = message.replace('复读：', '')
     message = message.replace('复读:', '')
@@ -157,8 +139,7 @@ def do_neteasy_music():
         return '网易云失败，请稍后重试。'
 
 
-def do_baike(js: dict):
-    msg = str(js['message'])
+def do_baike(msg: str):
     msg = msg.replace('百度', '')
     msg = msg.replace('百科', '')
     msg = msg.strip()
@@ -168,11 +149,10 @@ def do_baike(js: dict):
     return res
 
 
-def do_searchs(js: dict):
+def do_searchs(msg: str):
     sys_msg = {"role": "system", "content": SYSTEM_MSG}
     my_chat = [sys_msg]
 
-    msg = str(js['message'])
     keys = get_que_key(msg)
     for key in keys:
         print('key=', key)
@@ -193,8 +173,7 @@ def do_searchs(js: dict):
     return '后台服务超时，请稍后再试。'
 
 
-def do_weather(js: dict):
-    msg = str(js['message'])
+def do_weather(msg: str):
     msg = msg.replace('天气', '')
     msg = msg.strip()
 
@@ -203,8 +182,7 @@ def do_weather(js: dict):
     return result
 
 
-def do_clear_sing(js: dict):
-    msg = str(js['message'])
+def do_clear_sing(msg: str):
     msg = msg.replace('清唱', '')
     msg = msg.strip()
 
@@ -224,8 +202,7 @@ def do_clear_sing(js: dict):
     return '当前歌曲暂未收录'
 
 
-def do_sing(js: dict):
-    msg = str(js['message'])
+def do_sing(msg: str):
     msg = msg.replace('点歌', '')
     msg = msg.replace('唱歌', '')
     msg = msg.strip()
@@ -244,89 +221,3 @@ def do_sing(js: dict):
     if sing_path.is_file():
         return '[CQ:record,file=%s]' % sing_path.as_uri()
     return '当前歌曲暂未收录'
-
-
-def get_ans(js: dict, gid: int):
-    scode = check_key(js['message'])
-    ans = '后台服务超时，请稍后再试'
-    if scode == 0:
-        ans = do_talk(js, gid)
-    elif scode == 1:
-        ans = do_help(js)
-    elif scode == 2:
-        if gid == -1:
-            ans = "该功能需要在群聊中使用。"
-        else:
-            ans = do_ban(js)
-    elif scode == 3:
-        ans = do_pic(js)
-    elif scode == 5:
-        ans = do_alter_audio(js)
-    elif scode == 6:
-        ans = do_repeat(js)
-    # elif scode == 4:
-    #     ans = do_autio(js)
-    elif scode == 7:
-        ans = do_emotion()
-    elif scode == 8:
-        ans = do_neteasy_music()
-    elif scode == 9:
-        ans = do_baike(js)
-    elif scode == 10:
-        ans = do_searchs(js)
-    elif scode == 11:
-        ans = do_weather(js)
-    elif scode == 12:
-        ans = do_clear_sing(js)
-    elif scode == 13:
-        ans = do_sing(js)
-    return ans
-
-
-def do_private(js: dict):
-    user_id = int(js['user_id'])
-    message = js['message']
-    my_time = get_time()
-    ans = get_ans(js, -1)
-    if ans == None:
-        return
-
-    qq_msg = QQ_temp(user_id, MY_QQ_ID, my_time, message, -1)
-    qq_ans = QQ_temp(MY_QQ_ID, user_id, my_time, ans, -1)
-
-    with app.app_context():
-        db.session.add(qq_msg)
-        db.session.add(qq_ans)
-        db.session.commit()
-
-    qq_send = {"user_id": user_id, "message": ans}
-    requests.post(url=QQ_PRITE_URL, json=qq_send)
-
-
-def do_group(js: dict):
-    message = js['message']
-    if str(MY_QQ_ID) not in message:
-        return
-
-    message = message.replace(f'[CQ:at,qq={MY_QQ_ID}]', '').strip()
-    js['message'] = message
-    group_id = int(js['group_id'])
-    user_id = int(js['user_id'])
-    ans = get_ans(js, group_id)
-    my_time = get_time()
-
-    qq_msg = QQ_temp(user_id, MY_QQ_ID, my_time, message, group_id)
-    qq_ans = QQ_temp(MY_QQ_ID, user_id, my_time, ans, group_id)
-
-    with app.app_context():
-        db.session.add(qq_msg)
-        db.session.add(qq_ans)
-        db.session.commit()
-
-    qq_send = {"group_id": group_id, "message": ans}
-    requests.post(url=QQ_GROUP_URL, json=qq_send)
-
-
-def do_else(js: dict):
-    post_type = js['post_type']
-    pass

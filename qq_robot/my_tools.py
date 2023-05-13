@@ -4,7 +4,7 @@ import time
 
 import requests
 from flask import jsonify
-from mybasic import app, db
+from my_basic import app, db
 from private import *
 
 

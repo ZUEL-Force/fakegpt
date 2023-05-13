@@ -61,34 +61,34 @@ def get_ans():
     scode = check_key(text)
     ans = '后台服务超时，请稍后再试。'
     if scode == 0:
-        ans = do_talk(msg)
+        ans = do_talk(text,msg)
     elif scode == 1:
         ans = do_help()
     elif scode == 2:
         if gid == -1:
             ans = "该功能需要在群聊中使用。"
         else:
-            ans = do_ban(msg, gid)
+            ans = do_ban(text, str(gid))
     elif scode == 3:
-        ans = do_pic(msg)
+        ans = do_pic(text)
     elif scode == 5:
-        ans = do_alter_audio(msg)
+        ans = do_alter_audio(text)
     elif scode == 6:
-        ans = do_repeat(msg)
+        ans = do_repeat(text)
     elif scode == 7:
         ans = do_emotion()
     elif scode == 8:
         ans = do_neteasy_music()
     elif scode == 9:
-        ans = do_baike(msg)
+        ans = do_baike(text)
     elif scode == 10:
-        ans = do_searchs(msg)
+        ans = do_searchs(text)
     elif scode == 11:
-        ans = do_weather(msg)
+        ans = do_weather(text)
     elif scode == 12:
-        ans = do_clear_sing(msg)
+        ans = do_clear_sing(text)
     elif scode == 13:
-        ans = do_sing(msg)
+        ans = do_sing(text)
 
     fid, tid = msg.to_id, msg.from_id
     mytime = get_time()

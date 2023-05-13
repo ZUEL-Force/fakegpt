@@ -1,6 +1,6 @@
 import json
-
 from flask import request
+
 from my_tools import right, init_db
 from my_basic import app
 from private import MY_APP_PORT

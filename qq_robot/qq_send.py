@@ -1,4 +1,4 @@
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from flask_apscheduler import APScheduler
 import threading
 
 from my_extension import *
@@ -7,7 +7,7 @@ from my_tables import db, QQ_MSG
 from my_basic import app
 from my_tools import check_key, get_time
 
-sched = AsyncIOScheduler(timezone="Asia/Shanghai")
+sched = APScheduler()
 
 Receive_Queue = MessageQueue()
 Send_Queue = MessageQueue()

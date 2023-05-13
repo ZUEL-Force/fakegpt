@@ -16,7 +16,7 @@ speaker = 'kokomi'
 def do_talk(message: str, temp_msg: TEMP_MSG):
     sys_msg = {"role": "system", "content": SYSTEM_MSG}
     my_chat = [sys_msg]
-    pre_chat = get_pre_msgs(temp_msg)
+    pre_chat = temp_msg.pre_list
     my_chat += pre_chat
     my_chat.append({"role": "user", "content": message})
 
@@ -84,7 +84,7 @@ def do_alter_audio(message: str):
     sdict = ans['msg']['result']
     if message in sdict.keys():
         speaker = message
-        welcome = {'message': sdict[speaker]['text']}
+        welcome = sdict[speaker]['text']
         return do_repeat(welcome)
     else:
         return f"切换失败，{message}音色不存在"

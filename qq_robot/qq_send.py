@@ -23,14 +23,16 @@ def send_msg():
         return
 
     ans = msg.text
-    group_id = msg.group_id
-    to_id = msg.to_id
-    if group_id == -1:
+    group_id = msg.gid
+    to_id = msg.tid
+    if group_id != -1:
         qq_send = {"group_id": group_id, "message": ans}
         requests.post(url=QQ_GROUP_URL, json=qq_send)
     else:
         qq_send = {"user_id": to_id, "message": ans}
         requests.post(url=QQ_PRITE_URL, json=qq_send)
+
+    print("pass")
 
     qq_msg = QQ_MSG(msg)
     with app.app_context():
@@ -61,7 +63,7 @@ def get_ans():
     scode = check_key(text)
     ans = '后台服务超时，请稍后再试。'
     if scode == 0:
-        ans = do_talk(text,msg)
+        ans = do_talk(text, msg)
     elif scode == 1:
         ans = do_help()
     elif scode == 2:
@@ -90,7 +92,7 @@ def get_ans():
     elif scode == 13:
         ans = do_sing(text)
 
-    fid, tid = msg.to_id, msg.from_id
+    fid, tid = msg.tid, msg.fid
     mytime = get_time()
     qq_ans = TEMP_MSG(fid, tid, mytime, ans, gid)
     Send_Queue.put(qq_ans)

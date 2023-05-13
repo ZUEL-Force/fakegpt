@@ -57,7 +57,7 @@ def get_ans():
     if msg == None:
         return
 
-    text, gid = msg.text, msg.group_id
+    text, gid = msg.text, msg.gid
     scode = check_key(text)
     ans = '后台服务超时，请稍后再试。'
     if scode == 0:

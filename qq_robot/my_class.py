@@ -38,8 +38,8 @@ class TEMP_MSG():
     gid: int
 
     def __init__(self, fid: int, tid: int, tstamp: int, text: str, gid: int):
-        self.from_id = fid
-        self.to_id = tid
+        self.fid = fid
+        self.tid = tid
         self.tstamp = tstamp
         self.text = text
-        self.group_id = gid
+        self.gid = gid

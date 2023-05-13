@@ -18,22 +18,21 @@ class QQ_MSG(db.Model):
         self.tstamp = tstamp
         self.text = text
         self.group_id = gid
-        
-    def __init__(self,temp:TEMP_MSG):
+
+    def __init__(self, temp: TEMP_MSG):
         self.from_id = temp.fid
-        self.from_id = temp.tid
         self.to_id = temp.tid
         self.tstamp = temp.tstamp
         self.text = temp.text
         self.group_id = temp.gid
 
 
-def get_pre_msgs(msg: QQ_MSG):
+def get_pre_msgs(msg: TEMP_MSG):
     '''
     以满足gpt上下文要求的格式，返回指定用户的近3min聊天记录
     '''
-    group_id = msg.group_id
-    user_id = msg.from_id
+    group_id = msg.gid
+    user_id = msg.fid
     msg_t = msg.tstamp
 
     all_pre = QQ_MSG.query.filter(QQ_MSG.tstamp.__ge__(msg_t)).all()

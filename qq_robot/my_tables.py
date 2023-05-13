@@ -1,7 +1,5 @@
-import sqlite3
-
 from my_basic import db, app
-from private import MY_QQ_ID, SQLALCHEMY_DATABASE_URI
+from private import MY_QQ_ID
 from my_class import TEMP_MSG
 
 
@@ -37,8 +35,7 @@ def get_pre_msgs(msg: TEMP_MSG):
     user_id = msg.fid
     msg_t = msg.tstamp
 
-    mydb = sqlite3.connect(SQLALCHEMY_DATABASE_URI)
-    all_pre = mydb.execute('select * from qq_msg')
+    all_pre = QQ_MSG.query.filter(QQ_MSG.tstamp.__ge__(msg_t)).all()
 
     pre_chat = []
     for it in all_pre:

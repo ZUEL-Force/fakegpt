@@ -36,6 +36,7 @@ class TEMP_MSG():
     tstamp: int
     text: str
     gid: int
+    pre_list :list
 
     def __init__(self, fid: int, tid: int, tstamp: int, text: str, gid: int):
         self.fid = fid
@@ -43,3 +44,11 @@ class TEMP_MSG():
         self.tstamp = tstamp
         self.text = text
         self.gid = gid
+
+    def __init__(self, fid: int, tid: int, tstamp: int, text: str, gid: int,pre:list):
+        self.fid = fid
+        self.tid = tid
+        self.tstamp = tstamp
+        self.text = text
+        self.gid = gid
+        self.pre_list = pre

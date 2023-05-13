@@ -28,3 +28,18 @@ class MessageQueue:
     def empty(self):
         with self.lock:
             return self.queue.empty()
+
+
+class TEMP_MSG():
+    fid: int
+    tid: int
+    tstamp: int
+    text: str
+    gid: int
+
+    def __init__(self, fid: int, tid: int, tstamp: int, text: str, gid: int):
+        self.from_id = fid
+        self.to_id = tid
+        self.tstamp = tstamp
+        self.text = text
+        self.group_id = gid

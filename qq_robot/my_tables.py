@@ -1,5 +1,6 @@
 from my_basic import db
 from private import MY_QQ_ID
+from my_class import TEMP_MSG
 
 
 class QQ_MSG(db.Model):
@@ -17,6 +18,14 @@ class QQ_MSG(db.Model):
         self.tstamp = tstamp
         self.text = text
         self.group_id = gid
+        
+    def __init__(self,temp:TEMP_MSG):
+        self.from_id = temp.fid
+        self.from_id = temp.tid
+        self.to_id = temp.tid
+        self.tstamp = temp.tstamp
+        self.text = temp.text
+        self.group_id = temp.gid
 
 
 def get_pre_msgs(msg: QQ_MSG):

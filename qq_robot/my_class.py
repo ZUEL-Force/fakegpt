@@ -6,6 +6,7 @@ from private import MY_QQ_ID, CREATE_QQ_MSG, INSERT_QQ_MSG, PRE_MSG_SQL, DATABAS
 
 
 class MessageQueue:
+
     def __init__(self, size=10):
         self.queue = queue.Queue(maxsize=size)
         self.lock = threading.Lock()
@@ -49,11 +50,12 @@ class QQ_MSG:
 
 
 class DB_Conn:
+
     def __init__(self) -> None:
-        self.conn = sqlite3.connect(DATABASE_URI)
+        self.conn = sqlite3.connect(DATABASE_URI, check_same_thread=False)
         self.lock = threading.Lock()
 
-    def execute(self, sql: str, params):
+    def execute(self, sql: str, params=()):
         with self.lock:
             self.cur = self.conn.cursor()
             self.cur.execute(sql, params)
@@ -62,7 +64,7 @@ class DB_Conn:
         with self.lock:
             self.conn.commit()
 
-    def fetchall(self, sql: str, params):
+    def fetchall(self, sql: str, params=()):
         with self.lock:
             self.cur = self.conn.cursor()
             self.cur.execute(sql, params)

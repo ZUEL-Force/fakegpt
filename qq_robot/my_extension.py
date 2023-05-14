@@ -25,9 +25,9 @@ def do_talk(message: str, temp_msg: QQ_MSG):
         text = ans['msg']['result']
         if len(text) <= 100:
             if randint(1, 5) <= 2:
-                return do_repeat({'message': text})
+                return do_repeat(text)
         return text
-    return '响应超时，请稍后重试。'
+    return 'talk超时，请稍后重试。'
 
 
 def do_help():

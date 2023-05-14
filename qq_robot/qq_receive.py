@@ -1,40 +1,15 @@
 from my_tools import get_time
-from my_basic import db, app
 from private import MY_QQ_ID
-from my_tables import QQ_MSG, get_pre_msgs
 from qq_send import Receive_Queue
-from my_class import TEMP_MSG
+from my_class import QQ_MSG, insert_msg
 
 
-def push_msg(temp_msg: TEMP_MSG):
+def push_msg(temp_msg: QQ_MSG):
     '''
     若消息队列未满，则存入消息队列，并把消息插入数据库。
     '''
-    group_id = temp_msg.gid
-    user_id = temp_msg.fid
-    msg_t = temp_msg.tstamp
-
-    all_pre = QQ_MSG.query.filter(QQ_MSG.tstamp.__ge__(msg_t)).all()
-
-    pre_chat = []
-    for it in all_pre:
-        if it.tstamp >= msg_t:
-            break
-        if it.fid == MY_QQ_ID:
-            if it.tid == user_id:
-                if it.gid == group_id:
-                    pre_chat.append({"role": "assistant", "content": it.text})
-        if it.tid == MY_QQ_ID:
-            if it.fid == user_id:
-                if it.gid == group_id:
-                    pre_chat.append({"role": "user", "content": it.text})
-
-    temp_msg.pre_list = pre_chat
     if Receive_Queue.put(temp_msg):
-        qq_msg = QQ_MSG(temp_msg)
-        with app.app_context():
-            db.session.add(qq_msg)
-            db.session.commit()
+        insert_msg(temp_msg)
 
 
 def do_private(js: dict):
@@ -45,7 +20,7 @@ def do_private(js: dict):
     message = js['message']
     my_time = get_time()
 
-    qq_msg = TEMP_MSG(user_id, MY_QQ_ID, my_time, message, -1)
+    qq_msg = QQ_MSG(user_id, MY_QQ_ID, my_time, message, -1)
     push_msg(qq_msg)
 
 
@@ -63,7 +38,7 @@ def do_group(js: dict):
     user_id = int(js['user_id'])
     my_time = get_time()
 
-    qq_msg = TEMP_MSG(user_id, MY_QQ_ID, my_time, message, group_id)
+    qq_msg = QQ_MSG(user_id, MY_QQ_ID, my_time, message, group_id)
     push_msg(qq_msg)
 
 

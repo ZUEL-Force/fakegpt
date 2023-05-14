@@ -2,9 +2,7 @@ from flask_apscheduler import APScheduler
 import threading
 
 from my_extension import *
-from my_class import MessageQueue, TEMP_MSG
-from my_tables import db, QQ_MSG
-from my_basic import app
+from my_class import MessageQueue, QQ_MSG,insert_msg
 from my_tools import check_key, get_time
 
 sched = APScheduler()
@@ -32,12 +30,7 @@ def send_msg():
         qq_send = {"user_id": to_id, "message": ans}
         requests.post(url=QQ_PRITE_URL, json=qq_send)
 
-    print("pass")
-
-    qq_msg = QQ_MSG(msg)
-    with app.app_context():
-        db.session.add(qq_msg)
-        db.session.commit()
+    insert_msg(msg)
 
 
 def check_send():
@@ -94,7 +87,7 @@ def get_ans():
 
     fid, tid = msg.tid, msg.fid
     mytime = get_time()
-    qq_ans = TEMP_MSG(fid, tid, mytime, ans, gid)
+    qq_ans = QQ_MSG(fid, tid, mytime, ans, gid)
     Send_Queue.put(qq_ans)
 
 

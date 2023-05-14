@@ -1,8 +1,9 @@
 import json
 from flask import request
 
-from my_tools import right, init_db
+from my_tools import right
 from my_basic import app
+from my_class import init_db
 from private import MY_APP_PORT
 from qq_receive import do_group, do_else, do_private
 from qq_send import sched, check_receive, check_send

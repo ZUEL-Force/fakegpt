@@ -4,14 +4,7 @@ import time
 
 import requests
 from flask import jsonify
-from my_basic import app, db
 from private import *
-
-
-def init_db():
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
 
 
 def get_salt(margin: int = 64):

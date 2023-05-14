@@ -8,3 +8,4 @@ private.py
 /static
 temp.py
 *.bat
+*.sqlite3

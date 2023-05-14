@@ -7,16 +7,15 @@ from PIL import Image
 
 from my_tools import get_salt, to_baike, get_weather, get_que_key
 from private import *
-from my_tables import get_pre_msgs
-from my_class import TEMP_MSG
+from my_class import QQ_MSG, pre_msg
 
 speaker = 'kokomi'
 
 
-def do_talk(message: str, temp_msg: TEMP_MSG):
+def do_talk(message: str, temp_msg: QQ_MSG):
     sys_msg = {"role": "system", "content": SYSTEM_MSG}
     my_chat = [sys_msg]
-    pre_chat = temp_msg.pre_list
+    pre_chat = pre_msg(temp_msg)
     my_chat += pre_chat
     my_chat.append({"role": "user", "content": message})
 

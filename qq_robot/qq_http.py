@@ -25,7 +25,7 @@ def myqq():
 
 
 if __name__ == '__main__':
-    init_db()
+    # init_db()
     sched.add_job(id='check_receive',
                   func=check_receive,
                   trigger='interval',
